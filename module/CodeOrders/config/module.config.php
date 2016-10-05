@@ -120,7 +120,7 @@ return array(
                 'entity_identifier_name' => 'id',
                 'route_name' => 'code-orders.rest.users',
                 'route_identifier_name' => 'users_id',
-                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+                'hydrator' => 'Zend\\Hydrator\\ClassMethods',
             ),
             'CodeOrders\\V1\\Rest\\Users\\UsersCollection' => array(
                 'entity_identifier_name' => 'id',
