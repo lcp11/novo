@@ -10,6 +10,7 @@ namespace CodeOrders\V1\Rest\Users;
 
 
 use Zend\Db\TableGateway\TableGatewayInterface;
+use Zend\Paginator\Adapter\DbTableGateway;
 
 class UsersRepository
 {
@@ -24,6 +25,18 @@ class UsersRepository
     }
 
     public function findAll(){
-        return $this->tablegateway->select(); 
+        $tablegateway = $this->tablegateway;
+        $paginatorAdapter = new DbTableGateway($tablegateway);
+        return new UsersCollection($paginatorAdapter);
+    }
+
+    public function find($id){
+        $resultset = $this->tablegateway->select(['id'=>(int) $id]);
+
+        return $resultset->current();
+    }
+
+    public function findByUserName($username){
+        return $this->tablegateway->select(['username'=>$username])->current();
     }
 }

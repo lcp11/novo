@@ -1,21 +1,26 @@
 <?php
-namespace CodeOrders\V1\Rest\Users;
+namespace CodeOrders\V1\Rest\Orders;
 
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
-class UsersResource extends AbstractResourceListener
+class OrdersResource extends AbstractResourceListener
 {
 
     /**
-     * @var UsersRepository
+     * @var OrdersRepository
      */
     private $repository;
+    /**
+     * @var OrdersService
+     */
+    private $service;
 
-    public function __construct(UsersRepository $repository)
+    public function __construct(OrdersRepository $repository, OrdersService $service)
     {
 
         $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
@@ -26,7 +31,13 @@ class UsersResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        return new ApiProblem(405, 'The POST method has not been defined');
+        $result = $this->service->insert($data);
+        if($result=='error'){
+          return new ApiProblem(405, 'Erro ao inserir os itens');
+        } else {
+            return $result;
+        }
+
     }
 
     /**
@@ -59,11 +70,7 @@ class UsersResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        $user = $this->repository->findByUserName($this->getIdentity()->getRoleId());
-        if($user->getRole() == 'salesman'){
-            return new ApiProblem(403, 'não é possivel acessar');
-        }
-        return $this->repository->find($id);
+        return new ApiProblem(405, 'The GET method has not been defined for individual resources');
     }
 
     /**

@@ -2,24 +2,21 @@
 /**
  * Created by PhpStorm.
  * User: terainfor
- * Date: 05/10/16
- * Time: 14:32
+ * Date: 08/10/16
+ * Time: 14:44
  */
 
-namespace CodeOrders\V1\Rest\Users;
+namespace CodeOrders\V1\Rest\Orders;
 
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stdlib\Hydrator\ClassMethods;
 
-class UsersRepositoryFactory implements FactoryInterface
+class OrdersServiceFactory implements FactoryInterface
 {
 
     /**
@@ -30,12 +27,7 @@ class UsersRepositoryFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $dbAdapter = $serviceLocator->get('dbadpter');
-
-        $hydrator = new HydratingResultSet(new ClassMethods(), new UsersEntity());
-        $tablegateway = new TableGateway('oauth_users', $dbAdapter, null, $hydrator);
-        $usersrepository = new UsersRepository($tablegateway);
-        return $usersrepository;
+        return new OrdersService($serviceLocator->get('CodeOrders\\V1\\Rest\\Orders\\OrdersRepository'));
     }
 
     /**

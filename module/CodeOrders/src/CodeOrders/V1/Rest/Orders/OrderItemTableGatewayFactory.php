@@ -3,24 +3,25 @@
  * Created by PhpStorm.
  * User: terainfor
  * Date: 05/10/16
- * Time: 14:32
+ * Time: 23:40
  */
 
-namespace CodeOrders\V1\Rest\Users;
+namespace CodeOrders\V1\Rest\Orders;
 
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Hydrator\ClassMethods;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stdlib\Hydrator\ClassMethods;
 
-class UsersRepositoryFactory implements FactoryInterface
+class OrderItemTableGatewayFactory implements FactoryInterface
 {
+
 
     /**
      * Create service
@@ -30,12 +31,10 @@ class UsersRepositoryFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $dbAdapter = $serviceLocator->get('dbadpter');
-
-        $hydrator = new HydratingResultSet(new ClassMethods(), new UsersEntity());
-        $tablegateway = new TableGateway('oauth_users', $dbAdapter, null, $hydrator);
-        $usersrepository = new UsersRepository($tablegateway);
-        return $usersrepository;
+        $dbadapter = $serviceLocator->get('dbadpter');
+        $hydrator = new HydratingResultSet(new ClassMethods(), new OrderItemEntity());
+        $tablegateway = new TableGateway('order_items', $dbadapter, null, $hydrator);
+        return $tablegateway;
     }
 
     /**
