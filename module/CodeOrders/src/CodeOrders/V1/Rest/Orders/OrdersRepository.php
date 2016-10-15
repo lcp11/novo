@@ -25,12 +25,21 @@ class OrdersRepository
      * @var AbstractTableGateway
      */
     private $ordersitemtablegateway;
+    /**
+     * @var AbstractTableGateway
+     */
+    private $clientabstracttablegateway;
 
-    public function __construct(AbstractTableGateway $abstracttablegateway, AbstractTableGateway $ordersitemtablegateway)
+    public function __construct(
+        AbstractTableGateway $abstracttablegateway,
+        AbstractTableGateway $ordersitemtablegateway,
+        AbstractTableGateway $clientabstracttablegateway
+    )
     {
 
         $this->abstracttablegateway = $abstracttablegateway;
         $this->ordersitemtablegateway = $ordersitemtablegateway;
+        $this->clientabstracttablegateway = $clientabstracttablegateway;
     }
 
     public function findAll(){
@@ -67,5 +76,33 @@ class OrdersRepository
 
     public function getTableGateway(){
         return $this->abstracttablegateway;
+    }
+
+    public function update(array $data,$id){
+        $this->abstracttablegateway->update($data,['id'=>$id]);
+        return $id;
+    }
+    public function find($id){
+        $result = $this->abstracttablegateway->select(['id'=>(int) $id]);
+        if($result->count() == 1){
+            $hydrator = new ClassMethods();
+            $hydrator->addStrategy('items', new OrdersItemHydratorStrategy(new ClassMethods()));
+            $order = $result->current();
+            $client = $this->clientabstracttablegateway
+                ->select(['id'=>$order->getClientId()])
+                ->current();
+            $sql = $this->ordersitemtablegateway->getSql();
+                $select = $sql->select()
+                    ->join('products','order_items.product_id=products.id',['name'=>'name'])
+                    ->where(['order_id'=>$order->getId()]);
+            $items = $this->ordersitemtablegateway->selectWith($select);
+            $order->setClient($client);
+            foreach ($items as $item) {
+                $order->addItem($item);
+            }
+            $data = $hydrator->extract($order);
+            return $data;
+        }
+        return false; 
     }
 }

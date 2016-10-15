@@ -27,7 +27,10 @@ class OrdersServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new OrdersService($serviceLocator->get('CodeOrders\\V1\\Rest\\Orders\\OrdersRepository'));
+        $orderRepository = $serviceLocator->get('CodeOrders\\V1\\Rest\\Orders\\OrdersRepository');
+        $userRepository = $serviceLocator->get('CodeOrders\\V1\\Rest\\Users\\UsersRepository');
+        $productRepository = $serviceLocator->get('CodeOrders\\V1\\Rest\\Products\\ProductsRepository');
+        return new OrdersService($orderRepository, $userRepository, $productRepository);
     }
 
     /**

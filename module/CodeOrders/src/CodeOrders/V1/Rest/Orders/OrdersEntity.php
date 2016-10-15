@@ -5,6 +5,7 @@ class OrdersEntity
 {
     protected $id;
     protected $client_id;
+    protected $client;
     protected $user_id;
     protected $ptype_id;
     protected $total;
@@ -41,6 +42,25 @@ class OrdersEntity
     public function getClientId()
     {
         return $this->client_id;
+    }
+
+    /**
+     * @param mixed $client_id
+     * @return OrdersEntity
+     */
+    public function setClient($client)
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getClient()
+    {
+        return $this->client;
     }
 
     /**
